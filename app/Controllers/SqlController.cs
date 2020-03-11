@@ -36,6 +36,26 @@ namespace NETcore.Controllers
             return sh.GetSelectTable;
         }
         
+        [HttpPost]
+        public string GenCommand([FromBody]TwoTable tabs){
+            Console.WriteLine(tabs.Type);
+
+            GenerateCommand gc = new GenerateCommand(tabs.source, tabs.dest);
+            if(tabs.Type == "ins")
+                return gc.CreateCommand(SqlCommand.Insert);
+            else if(tabs.Type == "merg")
+                return gc.CreateCommand(SqlCommand.MergeInsert);
+            else if(tabs.Type == "update")
+                return gc.CreateCommand(SqlCommand.Update);
+            else if(tabs.Type == "select")
+                return gc.CreateCommand(SqlCommand.Select);  
+            else
+                return "something went wrong";
+
+
+        }
+
+
         public string test()
         {
             return "testx";

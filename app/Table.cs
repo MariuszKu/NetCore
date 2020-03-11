@@ -23,4 +23,11 @@ namespace NETcore{
 
     }
 
+    public class TwoTable{
+        public string Type { get; set; }
+        public Table source { get; set; }
+        public Table dest { get; set; }
+
+    }
+
 }
