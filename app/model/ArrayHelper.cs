@@ -24,7 +24,7 @@ namespace NETcore
                 return text;
 
             string workingtxt = text.Substring(0, a);
-            int bracket = 0;
+            //int bracket = 0;
             int quote = 0;
 
             for (int i = a-1; i > 0; i--)

@@ -41,10 +41,10 @@ namespace NETcore
 
         public string CreateCommand(SqlCommand sc)
         {
-            var column = String.Join(", ", descTable.ColumnsList.Where(z => z.Mapping != null).Select(z => z.Name));
-            var result = from d in descTable.ColumnsList
-                         join s in table.ColumnsList on d.Name equals s.Mapping
-                         select new { v1 = d.Name, v2 = s.Mapping, v3 = s.Name, key=d.Key };
+            var column = String.Join(", ", descTable.columnsList.Where(z => z.mapping != null).Select(z => z.name));
+            var result = from d in descTable.columnsList
+                         join s in table.columnsList on d.name equals s.mapping
+                         select new { v1 = d.name, v2 = s.mapping, v3 = s.name, key=d.key };
             var r1 = result.ToList().Select(z => String.Format("{0}", z.v1)).ToArray();
             var r2 = result.ToList().Select(z => z.v2 != z.v3 && sc != SqlCommand.MergeInsert ? String.Format("{0} AS {1}", z.v3, z.v2) : String.Format("{0}", z.v2)).ToArray();
             var r3 = result.Where(z=> !z.key).ToList().Select(z => String.Format("{0} = sc.{1}", z.v1, z.v2)).ToArray();
@@ -57,15 +57,15 @@ namespace NETcore
                 case SqlCommand.MergeInsert:
                     return String.Format("INSERT ({0}) \n VALUES ({1}) ", descCols, selectCols);
                 case SqlCommand.Insert:    
-                    if (!table.Name.Contains("query"))
-                       return String.Format("TRUNCATE TABLE {0};\nINSERT INTO {0} ({1}) \nSELECT\n\t {2} \nFROM\n {3}", descTable.Name, descCols, selectCols, table.Name);
+                    if (!table.name.Contains("query"))
+                       return String.Format("TRUNCATE TABLE {0};\nINSERT INTO {0} ({1}) \nSELECT\n\t {2} \nFROM\n {3}", descTable.name, descCols, selectCols, table.name);
                     else
-                        return String.Format("TRUNCATE TABLE {0};\nINSERT INTO {0} ({1}) \nSELECT\n\t {2} \nFROM\n ({3}) A", descTable.Name, descCols, selectCols, table.SqlDefinition);
+                        return String.Format("TRUNCATE TABLE {0};\nINSERT INTO {0} ({1}) \nSELECT\n\t {2} \nFROM\n ({3}) A", descTable.name, descCols, selectCols, table.sqlDefinition);
                 case SqlCommand.Select:
-                    if (!table.Name.Contains("query"))
-                        return String.Format("SELECT\n {0} \nFROM {1}", selectCols, table.Name);
+                    if (!table.name.Contains("query"))
+                        return String.Format("SELECT\n {0} \nFROM {1}", selectCols, table.name);
                     else
-                        return String.Format("SELECT {0} FROM ({1}) A", selectCols, table.SqlDefinition);
+                        return String.Format("SELECT {0} FROM ({1}) A", selectCols, table.sqlDefinition);
                 case SqlCommand.Update:
                     return updateCols;
                 default:
@@ -74,30 +74,46 @@ namespace NETcore
             }
         }
 
+        public string UpdateStm(){
+
+            var result = from d in descTable.columnsList.Where(z => z.key == true).ToList()
+                         join s in table.columnsList on d.name equals s.mapping
+                         select new { v1 = d.name, v2 = s.mapping };
+            var r = result.ToList().Select(z => String.Format("dst.{1} = sc.{2}", descTable.name, z.v1, z.v2)).ToArray();
+            string join = String.Join(" AND ", r);
+
+            return String.Format("UPDATE dst SET\n {0} \nFROM {1} sc INNER JOIN {2} dst ON {3}",
+            CreateCommand(SqlCommand.Update)
+            ,this.table.name
+            ,descTable.name
+            ,join
+            );
+        }
+
         internal string SelectWithAliases()
         {
             string command = "SELECT \n";
 
-            foreach(var item in table.ColumnsList)
+            foreach(var item in table.columnsList)
             {
-                command += item.Name + ",\n";
+                command += item.name + ",\n";
 
             }
 
-            command += "FROM " + table.SqlDefinition;
+            command += "FROM " + table.sqlDefinition;
 
             return command;
         }
 
         internal string createMerge()
         {
-            var srcColumn = String.Join(", ", table.ColumnsList.Where(z => z.Mapping != null).Select(z => z.Name));
-            var descColumn = String.Join(", ", descTable.ColumnsList.Select(z => z.Name));
-            var column = String.Join(", ", descTable.ColumnsList.Select(z => z.Name));
-            var result = from d in descTable.ColumnsList.Where(z => z.Key == true).ToList()
-                         join s in table.ColumnsList on d.Name equals s.Mapping
-                         select new { v1 = d.Name, v2 = s.Mapping };
-            var r = result.ToList().Select(z => String.Format("{0}.{1} = sc.{2}", descTable.Name, z.v1, z.v2)).ToArray();
+            var srcColumn = String.Join(", ", table.columnsList.Where(z => z.mapping != null).Select(z => z.name));
+            var descColumn = String.Join(", ", descTable.columnsList.Select(z => z.name));
+            var column = String.Join(", ", descTable.columnsList.Select(z => z.name));
+            var result = from d in descTable.columnsList.Where(z => z.key == true).ToList()
+                         join s in table.columnsList on d.name equals s.mapping
+                         select new { v1 = d.name, v2 = s.mapping };
+            var r = result.ToList().Select(z => String.Format("{0}.{1} = sc.{2}", descTable.name, z.v1, z.v2)).ToArray();
             string join = String.Join(" AND ", r);
             return String.Format(@"MERGE INTO {0} USING(
 {1}
@@ -106,20 +122,20 @@ WHEN MATCHED THEN UPDATE SET
 {3} 
 WHEN NOT MATCHED THEN 
 {4}
-", descTable.Name, CreateCommand(SqlCommand.Select), join, CreateCommand(SqlCommand.Update), CreateCommand(SqlCommand.MergeInsert));
+", descTable.name, CreateCommand(SqlCommand.Select), join, CreateCommand(SqlCommand.Update), CreateCommand(SqlCommand.MergeInsert));
 
         }
 
 
-  /*public void MappByName()
+  /*public void MappByname()
         {
             HlpTable hlp = null;
-            foreach(var item in table.ColumnsList)
+            foreach(var item in table.columnsList)
             {
-                item.Mapping = item.Mapping == null || item.Mapping == "" ? item.Name : item.Mapping;
-                hlp = descTable.ColumnsList.Where(z => z.Name.ToUpper() == item.Mapping.ToUpper()).FirstOrDefault();
+                item.mapping = item.mapping == null || item.mapping == "" ? item.name : item.mapping;
+                hlp = descTable.columnsList.Where(z => z.name.ToUpper() == item.mapping.ToUpper()).FirstOrDefault();
                 if (hlp != null)
-                    item.MapDestColumn = hlp.Name;
+                    item.MapDestColumn = hlp.name;
 
             }
 
@@ -130,14 +146,14 @@ WHEN NOT MATCHED THEN
             HlpTable hlp = null;
             int i = 0;
             
-            foreach (var item in table.ColumnsList)
+            foreach (var item in table.columnsList)
             {
-                if (i < descTable.ColumnsList.Count)
+                if (i < descTable.columnsList.Count)
                 {
-                    item.Mapping = item.Mapping == null || item.Mapping == "" ? item.Name : item.Mapping;
-                    hlp = descTable.ColumnsList[i];
+                    item.mapping = item.mapping == null || item.mapping == "" ? item.name : item.mapping;
+                    hlp = descTable.columnsList[i];
                     if (hlp != null)
-                        item.MapDestColumn = hlp.Name;
+                        item.MapDestColumn = hlp.name;
                     i++;
                 }
             }

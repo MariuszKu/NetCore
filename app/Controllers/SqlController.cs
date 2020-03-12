@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 
 namespace NETcore.Controllers
 {
-    [ApiController]
+    //[ApiController]
     [Route("[controller]/[action]")]
     public class SqlController : ControllerBase
     {
@@ -18,11 +18,11 @@ namespace NETcore.Controllers
         [HttpGet]
         public IEnumerable<Table> Get()
         {
-            tables.Add(new Table { Name="t1" });
+            tables.Add(new Table { name="t1" });
             List<ColumnTable> ct = new List<ColumnTable>();
-            ct.Add(new ColumnTable{ Name="id"} );
+            ct.Add(new ColumnTable{ name="id"} );
 
-            tables.Add(new Table { Name="t2", ColumnsList =ct} );
+            tables.Add(new Table { name="t2", columnsList =ct} );
             return tables;
         }
 
@@ -37,22 +37,33 @@ namespace NETcore.Controllers
         }
         
         [HttpPost]
-        public string GenCommand([FromBody]TwoTable tabs){
-            Console.WriteLine(tabs.Type);
-
+        public Sql GenCommand([FromBody]TwoTable tabs){
+            Console.WriteLine(tabs.type);
+            Sql sql = new Sql();
+            
             GenerateCommand gc = new GenerateCommand(tabs.source, tabs.dest);
-            if(tabs.Type == "ins")
-                return gc.CreateCommand(SqlCommand.Insert);
-            else if(tabs.Type == "merg")
-                return gc.CreateCommand(SqlCommand.MergeInsert);
-            else if(tabs.Type == "update")
-                return gc.CreateCommand(SqlCommand.Update);
-            else if(tabs.Type == "select")
-                return gc.CreateCommand(SqlCommand.Select);  
-            else
-                return "something went wrong";
-
-
+            if(tabs.type == "ins"){
+                sql.query = gc.CreateCommand(SqlCommand.Insert);
+                return sql;
+            }
+            else if(tabs.type == "merge"){
+                sql.query =gc.createMerge();
+                return sql;
+            }
+            else if(tabs.type == "update"){
+                sql.query =gc.UpdateStm();
+                 return sql;
+            }
+            else if(tabs.type == "select"){
+                sql.query =gc.CreateCommand(SqlCommand.Select);  
+                 return sql;
+            }
+            else{
+                sql.query = "something went wrong";
+                 return sql;
+            }
+            
+            
         }
 
 
