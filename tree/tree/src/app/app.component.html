@@ -1,0 +1,46 @@
+<div class="sidenav">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h5 class="panel-title">Tables</h5>
+    </div>
+    <div class="panel-body">
+
+        <ul *ngFor="let item of tableList" class="list-group">
+          <li (click)="add(item)" class="list-group-item list-group-item-success">{{item.name}}</li> 
+          <ng-container *ngIf="item.ex">
+            <ul *ngFor="let i  of item.columnsList" >
+              <li>{{ i.name }}</li>
+            </ul>
+          </ng-container>
+        </ul>
+    </div>
+  </div>  
+    
+
+</div>
+<div class="main" style="position: relative;">
+  <div class="top-f" style="height: 300px;margin-left: 15xp;">
+    <app-grids [source]="source" [dest]="dest" >
+      loading
+    </app-grids>
+  </div>
+  <div class="bottom-f">
+
+    <button (click)="parse()" class="btn btn-primary mr-1">Parse</button>
+    <button (click)="send('ins')" class="btn btn-primary mr-1">Insert</button>
+    <button (click)="send('merge')" class="btn btn-primary mr-1">Merge</button>
+    <button (click)="send('update')" class="btn btn-primary mr-1">Update</button>
+    <button (click)="send('select')" class="btn btn-primary mr-1">Select</button>
+    <button (click)="mapNames()" class="btn btn-primary mr-2">Map by Name</button>
+    <button (click)="mapOrder()" class="btn btn-primary mr-2">Map by Order</button>
+
+    <textarea class="form-control mr-2 mt-1" [(ngModel)]="sqlcode" rows="10">
+      
+    </textarea>
+  </div>
+
+</div>
+
+
+
+

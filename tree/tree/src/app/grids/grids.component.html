@@ -1,0 +1,58 @@
+
+            <div class="row" style="margin-left: 15px;">
+            <div class="col-xs-6">
+                <p>{{source.name}}</p>
+                <table *ngIf="source" class="table table-striped" class="table table-striped">
+                    <thead>
+                        <tr>
+                            <td scope="col">name</td>
+                            <td scope="col">dataType</td>
+                            <td scope="col">key</td>
+                            <td scope="col">mapping</td>
+                        </tr>
+                </thead>
+                    <tbody>
+                        <tr *ngFor="let column of source.columnsList">
+                            <td scope="row">{{column.name}}</td>
+                            <td >{{column.dataType}}</td>
+                            <td><input type="checkbox" [(ngModel)]="column.key"> </td>
+                            <td><input type="text" [(ngModel)]="column.mapping"></td>
+                        </tr>
+                    <tbody>
+                </table>
+                </div>
+
+            <div class="col-xs-1">
+                =
+            </div>    
+
+
+            <div class="col-xs-5">
+                <p>{{dest.name}}</p>
+               
+
+                    <table *ngIf="dest" class="table table-striped" class="table table-striped">
+                        <thead>
+                        <tr>
+                            <td scope="col">name</td>
+                            <td scope="col">dataType</td>
+                            <td scope="col">key</td>
+                            <td scope="col">mapping</td>
+                        </tr>
+                    </thead>
+                        <tbody>
+                        <tr *ngFor="let column of dest.columnsList">
+                            <td scope="row">{{column.name}}</td>
+                            <td >{{column.dataType}}</td>
+                            <td><input type="checkbox" [(ngModel)]="column.key"> </td>
+                            <td >{{column.mapping}}</td>
+                        </tr>
+                        <tbody>
+                    </table>
+                
+               
+                </div>
+            </div>
+            
+
+     
