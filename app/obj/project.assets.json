@@ -8,31 +8,24 @@
     ".NETCoreApp,Version=v3.1": []
   },
   "packageFolders": {
-    "C:\\Users\\z6mvk\\.nuget\\packages\\": {},
-    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
+    "C:\\Users\\mk\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\z6mvk\\Source\\Repos\\NetCore\\app\\NETcore.csproj",
+      "projectUniqueName": "D:\\kody\\NetCore\\NetCore\\app\\NETcore.csproj",
       "projectName": "NETcore",
-      "projectPath": "C:\\Users\\z6mvk\\Source\\Repos\\NetCore\\app\\NETcore.csproj",
-      "packagesPath": "C:\\Users\\z6mvk\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\z6mvk\\Source\\Repos\\NetCore\\app\\obj\\",
+      "projectPath": "D:\\kody\\NetCore\\NetCore\\app\\NETcore.csproj",
+      "packagesPath": "C:\\Users\\mk\\.nuget\\packages\\",
+      "outputPath": "D:\\kody\\NetCore\\NetCore\\app\\obj\\",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
-      ],
       "configFilePaths": [
-        "C:\\Users\\z6mvk\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "C:\\Users\\mk\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "netcoreapp3.1"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "\\\\bld01wm\\KMDnuget": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
